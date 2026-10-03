@@ -22,15 +22,15 @@ class BoardState:
         self.renderer.draw(screen)
 
     def update(self):
-        if self.game.players[self.turn].type == PlayerType.COMPUTER:
-            self.computer_turn()
-            self.change_turn()
-
         result = self.board.check_win()
 
         if result is not None:
             self.winner = result
             return InputState.GAME_OVER
+
+        if self.game.players[self.turn].type == PlayerType.COMPUTER:
+            self.computer_turn()
+            self.change_turn()
 
         return InputState.NORMAL
 
@@ -68,7 +68,6 @@ class EndBoardState:
 
     def handle_input(self, event):
         result = self.renderer.handle_event(event)
-        print("Result: ", result)
         if result == "main_menu":
             self.input_state = InputState.MAIN_MENU_PLAYER
 
@@ -193,7 +192,6 @@ class Game:
 
     def update(self):
         self.input_state = self.state.update()
-        print(self.input_state)
         if self.input_state == InputState.NEW_GAME:
             self.change_state(BoardState(self))
         elif self.input_state == InputState.MAIN_MENU_PLAYER:

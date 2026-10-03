@@ -26,7 +26,6 @@ class BoardGame:
         for match in self.winning_combo:
             states = [self.squares[coord].symbol for coord in match]
             if all(state == states[0] and state != SquareState.Empty for state in states):
-                print(match)
                 return states[0]
         empty_cells = [a for a in self.squares if self.squares[a].symbol == SquareState.Empty]
         if len(empty_cells) == 0:
