@@ -23,9 +23,10 @@ class BoardState:
 
     def update(self):
         self.board.update()
-        if self.board.check_win():
-            self.winner = self.board.check_win()
-            print(self.winner)
+        result = self.board.check_win()
+        if result is not None:
+            self.winner = result
+            # print(self.winner)
             return InputState.GAME_OVER
         return InputState.NORMAL
 
