@@ -22,19 +22,23 @@ class BoardState:
         self.renderer.draw(screen)
 
     def update(self):
-        self.board.update()
+        if self.game.players[self.turn].type == PlayerType.COMPUTER:
+            self.computer_turn()
+            self.change_turn()
+
         result = self.board.check_win()
+
         if result is not None:
             self.winner = result
-            # print(self.winner)
             return InputState.GAME_OVER
+
         return InputState.NORMAL
 
     def handle_input(self, event):
-        if self.game.players[self.turn].type == PlayerType.COMPUTER:
-            time.sleep(0.1)
-            self.computer_turn()
-            self.change_turn()
+        # if self.game.players[self.turn].type == PlayerType.COMPUTER:
+        #     time.sleep(0.1)
+        #     self.computer_turn()
+        #     self.change_turn()
         if event.type == pygame.MOUSEBUTTONDOWN:
             for button in self.renderer.square_buttons:
                 if button.clicked(event):
@@ -49,12 +53,10 @@ class BoardState:
         self.game.players[self.turn].move(self.board)
 
     def square_clicked(self, square):
-        success, message = self.board.can_play(square)
-        if not success:
-            return False
-        else:
-            square.change_state(self.game.players[self.turn].symbol)
-            return True
+        return self.board.make_move(
+            (square.x, square.y),
+            self.game.players[self.turn].symbol
+        )
 
 
 class EndBoardState:
@@ -66,7 +68,8 @@ class EndBoardState:
 
     def handle_input(self, event):
         result = self.renderer.handle_event(event)
-        if result == "Main_Menu":
+        print("Result: ", result)
+        if result == "main_menu":
             self.input_state = InputState.MAIN_MENU_PLAYER
 
     def update(self):
@@ -190,6 +193,7 @@ class Game:
 
     def update(self):
         self.input_state = self.state.update()
+        print(self.input_state)
         if self.input_state == InputState.NEW_GAME:
             self.change_state(BoardState(self))
         elif self.input_state == InputState.MAIN_MENU_PLAYER:
