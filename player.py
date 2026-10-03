@@ -1,4 +1,5 @@
-from enum_list import *
+from enum_list import PlayerType
+from random import choice
 
 
 class Player:
@@ -10,12 +11,18 @@ class Player:
     def set_player_type(self, player_type):
         self.type = player_type
 
+    def move_basic(self, board):
+        if self.type == PlayerType.COMPUTER:
+            for coord in board.get_empty_squares():
+                return board.make_move(coord, self.symbol)
+        return None
+
     def move(self, board):
         if self.type == PlayerType.COMPUTER:
-            for square in board.squares.values():
-                if square.symbol == SquareState.Empty:
-                    square.change_state(self.symbol)
-                    return
+            coord = choice(board.get_empty_squares())
+            return board.make_move(coord, self.symbol)
+        return None
+
 
     def set_symbol(self, symbol):
         self.symbol = symbol

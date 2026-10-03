@@ -55,7 +55,7 @@ class BoardState:
         self.turn = (self.turn + 1) % 2
 
     def computer_turn(self):
-        self.game.players[self.turn].move(self.board)
+        move = self.game.players[self.turn].move(self.board)
 
     def square_clicked(self, square):
         return self.board.make_move(
