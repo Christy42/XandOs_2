@@ -41,3 +41,29 @@ class BoardGame:
     def update(self):
         pass
 
+    def get_state(self):
+        return tuple(
+            self.squares[(x, y)].symbol.value
+            for x in range(1, 4)
+            for y in range(1, 4)
+        )
+
+    def get_empty_squares(self):
+        return [
+            coord
+            for coord, square in self.squares.items()
+            if square.symbol == SquareState.Empty
+        ]
+
+    def make_move(self, coord, symbol):
+        square = self.squares[coord]
+
+        if square.symbol != SquareState.Empty:
+            return False
+
+        square.change_state(symbol)
+        return True
+
+    def reset(self):
+        for square in self.squares.values():
+            square.symbol = SquareState.Empty
