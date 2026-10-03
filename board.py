@@ -37,9 +37,6 @@ class BoardGame:
             return True, ""
         return False, "Square already filled"
 
-    def update(self):
-        return InputState.NORMAL
-
     def get_state(self):
         return tuple(
             self.squares[(x, y)].symbol.value

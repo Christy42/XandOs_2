@@ -92,7 +92,6 @@ class MainMenuStateChoosePlayers:
         self.game = game
         self.input_state = InputState.NORMAL
         self.renderer = menu_rendering.MainMenuPlayer(WIDTH, HEIGHT)
-        self.winner = None
 
     def handle_input(self, event):
         result = self.renderer.handle_event(event)
