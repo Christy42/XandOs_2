@@ -30,6 +30,11 @@ class BoardState:
 
         if self.game.players[self.turn].type == PlayerType.COMPUTER:
             self.computer_turn()
+            result = self.board.check_win()
+            if result is not None:
+                self.winner = result
+                return InputState.GAME_OVER
+
             self.change_turn()
 
         return InputState.NORMAL
