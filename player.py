@@ -1,3 +1,6 @@
+import pickle
+
+
 from enum_list import PlayerType, SquareState
 from random import choice, random
 
@@ -68,3 +71,35 @@ class QLearningPlayer(Player):
         ]
 
         return choice(best_moves)
+
+    def learn(self, state, action, reward, next_state, next_board):
+
+        if state not in self.q_table:
+            self.q_table[state] = {}
+
+        if action not in self.q_table[state]:
+            self.q_table[state][action] = 0.0
+
+        if next_state not in self.q_table:
+            self.q_table[next_state] = {
+                coord: 0.0
+                for coord in next_board.get_empty_squares()
+            }
+
+        if self.q_table[next_state]:
+            max_next_value = max(self.q_table[next_state].values())
+        else:
+            max_next_value = 0.0
+
+        old_value = self.q_table[state][action]
+
+        new_value = old_value + self.learning_rate * (
+                reward + self.discount * max_next_value - old_value
+        )
+
+        self.q_table[state][action] = new_value
+
+    def save_q_table(self, filename):
+
+        with open(filename, "wb") as file:
+            pickle.dump(self.q_table, file)

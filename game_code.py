@@ -1,7 +1,7 @@
 import pygame
 from random import randint
 
-from player import Player, HumanPlayer, RandomPlayer
+from player import Player, HumanPlayer, RandomPlayer, QLearningPlayer
 from enum_list import *
 from display import board_rendering, menu_rendering
 from universal_names import *
@@ -259,7 +259,7 @@ class Game:
             if player_type == PlayerType.USER:
                 self.players.append(HumanPlayer(SquareState.X))
             elif player_type == PlayerType.COMPUTER:
-                self.players.append(RandomPlayer(SquareState.O))
+                self.players.append(QLearningPlayer(SquareState.O))
 
     def set_player_symbol(self, player_symbol):
         self.players[0].symbol = player_symbol
