@@ -29,7 +29,7 @@ class BoardGame:
                 return states[0]
         empty_cells = [a for a in self.squares if self.squares[a].symbol == SquareState.Empty]
         if len(empty_cells) == 0:
-            return SquareState.Empty
+            return "Draw"
         return None
 
     def can_play(self, square):

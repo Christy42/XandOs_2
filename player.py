@@ -46,6 +46,7 @@ class QLearningPlayer(Player):
         self.epsilon = epsilon
 
         self.q_table = {}
+        self.state_mapping = {3: 0, "X": 1, "O": 2}
 
     def choose_move(self, board):
 
@@ -103,3 +104,13 @@ class QLearningPlayer(Player):
 
         with open(filename, "wb") as file:
             pickle.dump(self.q_table, file)
+
+    def load_q_table(self, filename):
+
+        try:
+            with open(filename, "rb") as file:
+                self.q_table = pickle.load(file)
+
+        except FileNotFoundError:
+            self.q_table = {}
+

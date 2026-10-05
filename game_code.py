@@ -63,8 +63,6 @@ class BoardState(State):
         player = self.game.players[self.turn]
 
         move = player.choose_move(self.board)
-        print("CCC")
-        print(move)
 
         if move is not None:
             return self.board.make_move(
@@ -253,7 +251,6 @@ class Game:
         self.state.handle_input(event)
 
     def set_player_type(self, player_types):
-        print(player_types)
         self.players = []
         for player_type in player_types:
             if player_type == PlayerType.USER:
