@@ -114,3 +114,6 @@ class QLearningPlayer(Player):
         except FileNotFoundError:
             self.q_table = {}
 
+    def set_q_table(self, q_table):
+        self.q_table = q_table
+
