@@ -46,11 +46,21 @@ class QLearningPlayer(Player):
         self.epsilon = epsilon
 
         self.q_table = {}
-        self.state_mapping = {3: 0, "X": 1, "O": 2}
+        self.state_mapping = {3: 0, SquareState.X: 1, SquareState.O: 2}
+
+    def get_state(self, board):
+        state = board.get_state()
+        state = tuple(
+            3 if square == 3
+            else 1 if square == self.state_mapping[self.symbol]
+            else 2
+            for square in state
+        )
+        return state
 
     def choose_move(self, board):
 
-        state = board.get_state()
+        state = self.get_state(board)
 
         if state not in self.q_table:
             self.q_table[state] = {

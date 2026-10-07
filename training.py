@@ -23,13 +23,13 @@ def load_q_table(filename):
     return q_table_values
 
 
-q_table_o = load_q_table(q_table_file+"o")
-q_table_x = load_q_table(q_table_file+"x")
+q_table_1 = load_q_table(q_table_file+"1")
+q_table_2 = load_q_table(q_table_file+"2")
 computer = QLearningPlayer(SquareState.O)
 computer_2 = QLearningPlayer(SquareState.X)
 
-computer.set_q_table(q_table_o)
-computer_2.set_q_table(q_table_x)
+computer.set_q_table(q_table_1)
+computer_2.set_q_table(q_table_2)
 
 
 
@@ -75,21 +75,19 @@ for game in range(10000):
                 next_reward = rewards[i]
 
                 for state, move, next_state in reversed(history_player):
-                    reward = next_reward
+                    players[i].learn(state, move, next_reward, next_state, board)
+                    next_reward = 0
 
-                    if (state, move, next_state) == history_player[-1]:
-                        reward = rewards[i]
-                    players[i].learn(state, move, reward, next_state, board)
 
             game_running = False
         else:
             # switch player
             turn = (turn + 1) % 2
-computer.save_q_table(q_table_file + "o")
-computer_2.save_q_table(q_table_file+"x")
+computer.save_q_table(q_table_file + "1")
+computer_2.save_q_table(q_table_file+"2")
 
 
-with open(q_table_file + "o", "rb") as file:
+with open(q_table_file + "1", "rb") as file:
     q_table = pickle.load(file)
 
 for state, moves in list(q_table.items())[:5]:
