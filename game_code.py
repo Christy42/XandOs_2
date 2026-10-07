@@ -1,11 +1,34 @@
 import pygame
 from random import randint
+import pickle
 
 from player import Player, HumanPlayer, RandomPlayer, QLearningPlayer
 from enum_list import *
 from display import board_rendering, menu_rendering
 from universal_names import *
 from board import BoardGame
+
+# probably let this live elsewhere at some point
+folder = "C:\\Users\\Admin\\PycharmProjects\\xs_and_os\\training_folder\\"
+q_table_file = folder + "q_table.okl"
+
+def save_q_table(q_table_values, filename):
+    with open(filename, "wb") as file:
+        pickle.dump(q_table_values, file)
+
+
+def load_q_table(filename):
+    try:
+        with open(filename, "rb") as file:
+            q_table_values = pickle.load(file)
+
+    except FileNotFoundError:
+        q_table_values = {}
+    return q_table_values
+
+
+q_table_o = load_q_table(q_table_file+"o")
+q_table_x = load_q_table(q_table_file+"x")
 
 class State:
     def __init__(self, game):
@@ -60,6 +83,7 @@ class BoardState(State):
         self.turn = (self.turn + 1) % 2
 
     def computer_turn(self):
+        pygame.time.delay(500)
         player = self.game.players[self.turn]
 
         move = player.choose_move(self.board)
@@ -256,7 +280,14 @@ class Game:
             if player_type == PlayerType.USER:
                 self.players.append(HumanPlayer(SquareState.X))
             elif player_type == PlayerType.COMPUTER:
-                self.players.append(QLearningPlayer(SquareState.O))
+                self.players.append(QLearningPlayer(SquareState.O, epsilon=0))
+        print(self.players)
+        if player_types[0] == PlayerType.COMPUTER:
+            self.players[0].set_q_table(q_table_o)
+            print("Q tables set")
+        if player_types[1] == PlayerType.COMPUTER:
+            self.players[1].set_q_table(q_table_x)
+            print("Q tables set")
 
     def set_player_symbol(self, player_symbol):
         self.players[0].symbol = player_symbol
