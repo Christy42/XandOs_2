@@ -27,8 +27,8 @@ def load_q_table(filename):
     return q_table_values
 
 
-q_table_o = load_q_table(q_table_file+"o")
-q_table_x = load_q_table(q_table_file+"x")
+q_table_1 = load_q_table(q_table_file+"1")
+q_table_2 = load_q_table(q_table_file+"2")
 
 class State:
     def __init__(self, game):
@@ -83,9 +83,11 @@ class BoardState(State):
         self.turn = (self.turn + 1) % 2
 
     def computer_turn(self):
-        pygame.time.delay(500)
-        player = self.game.players[self.turn]
+        pygame.time.delay(300)
 
+        player = self.game.players[self.turn]
+        print(type(player))
+        print("Makes a move")
         move = player.choose_move(self.board)
 
         if move is not None:
@@ -283,10 +285,11 @@ class Game:
                 self.players.append(QLearningPlayer(SquareState.O, epsilon=0))
         print(self.players)
         if player_types[0] == PlayerType.COMPUTER:
-            self.players[0].set_q_table(q_table_o)
+            self.players[0].set_q_table(q_table_1)
             print("Q tables set")
         if player_types[1] == PlayerType.COMPUTER:
-            self.players[1].set_q_table(q_table_x)
+            # self.players[1] = RandomPlayer(SquareState.O)
+            self.players[1].set_q_table(q_table_2)
             print("Q tables set")
 
     def set_player_symbol(self, player_symbol):

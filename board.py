@@ -22,13 +22,21 @@ class BoardGame:
     def update_square(self, coord, new_state):
         self.squares[coord].change_state(new_state)
 
-    def check_win(self):
+    def check_win(self, print_game=False):
         for match in self.winning_combo:
             states = [self.squares[coord].symbol for coord in match]
             if all(state == states[0] and state != SquareState.Empty for state in states):
+                if print_game:
+                    self.print_board()
+                    print("Winning combination:", match)
+                    print("Winner:", states[0])
+
                 return states[0]
         empty_cells = [a for a in self.squares if self.squares[a].symbol == SquareState.Empty]
         if len(empty_cells) == 0:
+            if print_game:
+                self.print_board()
+                print("DRAW")
             return "Draw"
         return None
 
@@ -63,3 +71,25 @@ class BoardGame:
     def reset(self):
         for square in self.squares.values():
             square.symbol = SquareState.Empty
+
+    def print_board(self):
+        print("\nFinal board:")
+
+        for y in range(1, 4):
+            row = []
+
+            for x in range(1, 4):
+                square = self.squares[(x, y)]
+
+                if square.symbol == SquareState.X:
+                    symbol = "X"
+                elif square.symbol == SquareState.O:
+                    symbol = "O"
+                else:
+                    symbol = "-"
+
+                row.append(f"{symbol} ")
+
+            print("".join(row))
+
+        print()
