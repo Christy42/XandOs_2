@@ -36,7 +36,7 @@ computer_2.set_q_table(q_table_2)
 players = [computer, computer_2]
 
 
-for game in range(10000):
+for game in range(1000000):
     game_running = True
     turn = 0
     winner = ""
@@ -54,7 +54,7 @@ for game in range(10000):
         if move is not None:
             board.make_move(move, player.symbol)
         next_state = board.get_state()
-        history[turn].append((state, move, next_state))
+        history[turn].append((state, move))
 
 
         result = board.check_win()
@@ -68,14 +68,17 @@ for game in range(10000):
                 rewards = [-1, -1]
                 rewards[turn] = 1 # combination just makes the loser have -1 and current player (winner) 1.
 
-            # learn backwards through the move's made by each player
+            # learn backwards through the moves made by each player
+            terminal_state = board.get_state()
             for i in range(2):
 
                 history_player = history[i]
                 next_reward = rewards[i]
+                next_state = terminal_state
 
-                for state, move, next_state in reversed(history_player):
-                    players[i].learn(state, move, next_reward, next_state, board)
+                for state, move in reversed(history_player):
+                    players[i].learn(state, move, next_reward, next_state)
+                    next_state = state
                     next_reward = 0
 
 

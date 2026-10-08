@@ -47,6 +47,7 @@ class QLearningPlayer(Player):
 
         self.q_table = {}
         self.state_mapping = {3: 0, SquareState.X: 1, SquareState.O: 2}
+        self.last_move_info = {}
 
     def get_state(self, board):
         state = board.get_state()
@@ -71,19 +72,27 @@ class QLearningPlayer(Player):
         q_values = self.q_table[state]
 
         if random() < self.epsilon:
-            return choice(list(q_values.keys()))
+            move = choice(list(q_values.keys()))
+        else:
+            max_value = max(q_values.values())
 
-        max_value = max(q_values.values())
 
-        best_moves = [
-            coord
-            for coord, value in q_values.items()
-            if value == max_value
-        ]
 
-        return choice(best_moves)
+            best_moves = [
+                coord
+                for coord, value in q_values.items()
+                if value == max_value
+            ]
 
-    def learn(self, state, action, reward, next_state, next_board):
+            move = choice(best_moves)
+        self.last_move_info = {
+            "state": state,
+            "q_values": q_values.copy(),
+            "chosen_move": move
+        }
+        return move
+
+    def learn(self, state, action, reward, next_state):
 
         if state not in self.q_table:
             self.q_table[state] = {}
@@ -91,13 +100,7 @@ class QLearningPlayer(Player):
         if action not in self.q_table[state]:
             self.q_table[state][action] = 0.0
 
-        if next_state not in self.q_table:
-            self.q_table[next_state] = {
-                coord: 0.0
-                for coord in next_board.get_empty_squares()
-            }
-
-        if self.q_table[next_state]:
+        if next_state in self.q_table and self.q_table[next_state]:
             max_next_value = max(self.q_table[next_state].values())
         else:
             max_next_value = 0.0
