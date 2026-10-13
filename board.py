@@ -22,15 +22,22 @@ class BoardGame:
     def update_square(self, coord, new_state):
         self.squares[coord].change_state(new_state)
 
-    def check_win(self):
+    def check_win(self, print_game=False):
         for match in self.winning_combo:
             states = [self.squares[coord].symbol for coord in match]
             if all(state == states[0] and state != SquareState.Empty for state in states):
-                print(match)
+                if print_game:
+                    self.print_board()
+                    print("Winning combination:", match)
+                    print("Winner:", states[0])
+
                 return states[0]
         empty_cells = [a for a in self.squares if self.squares[a].symbol == SquareState.Empty]
         if len(empty_cells) == 0:
-            return SquareState.Empty
+            if print_game:
+                self.print_board()
+                print("DRAW")
+            return "Draw"
         return None
 
     def can_play(self, square):
@@ -38,6 +45,51 @@ class BoardGame:
             return True, ""
         return False, "Square already filled"
 
-    def update(self):
-        pass
+    def get_state(self):
+        return tuple(
+            self.squares[(x, y)].symbol.value
+            for x in range(1, 4)
+            for y in range(1, 4)
+        )
 
+    def get_empty_squares(self):
+        return [
+            coord
+            for coord, square in self.squares.items()
+            if square.symbol == SquareState.Empty
+        ]
+
+    def make_move(self, coord, symbol):
+        square = self.squares[coord]
+
+        if square.symbol != SquareState.Empty:
+            return False
+
+        square.change_state(symbol)
+        return True
+
+    def reset(self):
+        for square in self.squares.values():
+            square.symbol = SquareState.Empty
+
+    def print_board(self):
+        print("\nFinal board:")
+
+        for y in range(1, 4):
+            row = []
+
+            for x in range(1, 4):
+                square = self.squares[(x, y)]
+
+                if square.symbol == SquareState.X:
+                    symbol = "X"
+                elif square.symbol == SquareState.O:
+                    symbol = "O"
+                else:
+                    symbol = "-"
+
+                row.append(f"{symbol} ")
+
+            print("".join(row))
+
+        print()
