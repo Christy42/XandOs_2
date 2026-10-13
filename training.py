@@ -1,6 +1,6 @@
 import pickle
 
-from player import QLearningPlayer
+from player import QLearningPlayer, RandomPlayer
 from enum_list import SquareState
 from board import BoardGame
 
@@ -26,10 +26,14 @@ def load_q_table(filename):
 q_table_1 = load_q_table(q_table_file+"1")
 q_table_2 = load_q_table(q_table_file+"2")
 computer = QLearningPlayer(SquareState.O)
+
 computer_2 = QLearningPlayer(SquareState.X)
+
 
 computer.set_q_table(q_table_1)
 computer_2.set_q_table(q_table_2)
+# computer_2 = RandomPlayer(SquareState.X)
+computer = RandomPlayer(SquareState.O)
 
 
 
@@ -75,22 +79,21 @@ for game in range(1000000):
                 history_player = history[i]
                 next_reward = rewards[i]
                 next_state = terminal_state
-
-                for state, move in reversed(history_player):
-                    players[i].learn(state, move, next_reward, next_state)
-                    next_state = state
-                    next_reward = 0
-
+                if i == 1:
+                    for state, move in reversed(history_player):
+                        players[i].learn(state, move, next_reward, next_state)
+                        next_state = state
+                        next_reward = 0
 
             game_running = False
         else:
             # switch player
             turn = (turn + 1) % 2
-computer.save_q_table(q_table_file + "1")
+# computer.save_q_table(q_table_file + "1")
 computer_2.save_q_table(q_table_file+"2")
 
 
-with open(q_table_file + "1", "rb") as file:
+with open(q_table_file + "2", "rb") as file:
     q_table = pickle.load(file)
 
 for state, moves in list(q_table.items())[:5]:

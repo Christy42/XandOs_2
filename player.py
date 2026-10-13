@@ -130,3 +130,102 @@ class QLearningPlayer(Player):
     def set_q_table(self, q_table):
         self.q_table = q_table
 
+
+class PerfectPlayer(Player):
+    def __init__(self, symbol):
+        super().__init__(symbol)
+        self.type = PlayerType.COMPUTER
+        self.last_move_score = None
+
+    def choose_move_old(self, board):
+        best_move = None
+        best_score = float("-inf")
+        for move in self.get_available_moves(board):
+
+            board.squares[move].symbol = self.symbol
+
+            score = self.minimax(board, False)
+
+            board.squares[move].symbol = SquareState.Empty
+
+            if score > best_score:
+                best_score = score
+                best_move = move
+        return best_move
+
+    def choose_move(self, board):
+        best_move = None
+        best_score = float("-inf")
+
+        for move in self.get_available_moves(board):
+            board.squares[move].symbol = self.symbol
+
+            score = self.minimax(board, False)
+
+            board.squares[move].symbol = SquareState.Empty
+
+            if score > best_score:
+                best_score = score
+                best_move = move
+
+        self.last_move_score = best_score
+        return best_move
+
+    def minimax(self, board, is_maximizing):
+        winner = self.get_winner(board)
+
+        if winner == self.symbol:
+            return 1
+
+        if winner is not None:
+            return -1
+
+        if not self.get_available_moves(board):
+            return 0
+
+        opponent = (
+            SquareState.O
+            if self.symbol == SquareState.X
+            else SquareState.X
+        )
+
+        if is_maximizing:
+            best_score = float("-inf")
+            symbol = self.symbol
+        else:
+            best_score = float("inf")
+            symbol = opponent
+
+        for move in self.get_available_moves(board):
+            board.squares[move].symbol = symbol
+
+            score = self.minimax(board, not is_maximizing)
+
+            board.squares[move].symbol = SquareState.Empty
+
+            if is_maximizing:
+                best_score = max(best_score, score)
+            else:
+                best_score = min(best_score, score)
+
+        return best_score
+
+    def get_available_moves(self, board):
+
+        return [
+            position
+            for position, state in board.squares.items()
+            if state.symbol == SquareState.Empty
+        ]
+
+    def get_winner(self, board):
+        for combo in board.winning_combo:
+            states = [
+                board.squares[position].symbol
+                for position in combo
+            ]
+
+            if states[0] != SquareState.Empty and len(set(states)) == 1:
+                return states[0]
+
+        return None

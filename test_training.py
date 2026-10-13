@@ -1,6 +1,6 @@
 import pickle
 
-from player import QLearningPlayer, RandomPlayer
+from player import QLearningPlayer, RandomPlayer, PerfectPlayer
 from enum_list import SquareState
 from board import BoardGame
 
@@ -8,6 +8,10 @@ from board import BoardGame
 folder = "C:\\Users\\Admin\\PycharmProjects\\xs_and_os\\training_folder\\"
 q_table_file = folder + "q_table.okl"
 interesting_game_file = folder + "interesting_games.txt"
+
+filename = folder + "random_vs_perfect.txt"
+
+
 
 def record_game(result, history, filename):
     if result not in ("Draw", "Loss"):
@@ -57,18 +61,23 @@ q_table_1 = load_q_table(q_table_file+"1")
 q_table_2 = load_q_table(q_table_file+"2")
 computer = QLearningPlayer(SquareState.O, epsilon=0)
 computer.set_q_table(q_table_1)
-# computer = RandomPlayer(SquareState.O)
+computer = RandomPlayer(SquareState.O)
+# computer = PerfectPlayer(SquareState.O)
 
 
-computer_2 = RandomPlayer(SquareState.X)
-# computer_2 = QLearningPlayer(SquareState.X, epsilon=0)
-# computer_2.set_q_table(q_table_2)
+# computer_2 = RandomPlayer(SquareState.X)
+# computer_2 = PerfectPlayer(SquareState.X)
+computer_2 = QLearningPlayer(SquareState.X, epsilon=0)
+computer_2.set_q_table(q_table_2)
 
 
 players = [computer, computer_2]
 
 results = {SquareState.O: 0, SquareState.X: 0, "Draw": 0}
-for game in range(10000):
+for game in range(1000):
+    if game % 10 == 0:
+        print(game)
+    # print(game)
     game_running = True
     turn = 0
     winner = ""
@@ -110,3 +119,11 @@ for game in range(10000):
 
 for result in results:
     print(str(result) + ": " + str(results[result]))
+# These are structured player 1 wins/draw/ player 2 wins. The players are listed in order of play
+# Perfect Vs Random; 99.6%/0.4%/0% of the time.
+# Q Learning vs Random; 94.9%/5.1%/0%
+# Q Learning vs Perfect; 0%/100%/0%
+# Random Vs Perfect; 0%/15.6%/84.4%
+# Random Vs QLearning; 0.5%/8.7%/90.8%
+# Perfect vs QLearning; 0%/100%/0%
+# QLearning vs QLearning; 0%/100%/0%
